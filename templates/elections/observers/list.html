@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Kuzatuvchilar - Saylov tizimi{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Kuzatuvchilar</h1>
+    <a href="{% url 'observer_create' %}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Qo'shish
+    </a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Qidiruv va filtrlash</h6>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                {{ filter.form.full_name.label_tag }}
+                {{ filter.form.full_name }}
+            </div>
+            <div class="col-md-4">
+                {{ filter.form.party_name.label_tag }}
+                {{ filter.form.party_name }}
+            </div>
+            <div class="col-md-4">
+                {{ filter.form.district.label_tag }}
+                {{ filter.form.district }}
+            </div>
+            <div class="col-12 mt-3">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Qidirish
+                </button>
+                <a href="{% url 'observer_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-redo"></i> Tozalash
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Kuzatuvchilar ro'yxati</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <thead class="table-light">
+                    <tr>
+                        <th>F.I.Sh.</th>
+                        <th>Partiya</th>
+                        <th>Hudud</th>
+                        <th>Telefon raqami</th>
+                        <th>Holati</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for observer in filter.qs %}
+                    <tr>
+                        <td>{{ observer.full_name }}</td>
+                        <td>{{ observer.party_name }}</td>
+                        <td>{{ observer.district }}</td>
+                        <td>{{ observer.phone_number }}</td>
+                        <td>{% if observer.is_active %}Faol{% else %}Faol emas{% endif %}</td>
+                        <td>
+                            <a href="{% url 'observer_update' observer.id %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Tahrirlash
+                            </a>
+                            <a href="{% url 'observer_delete' observer.id %}" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> O'chirish
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">Kuzatuvchilar topilmadi</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Initialize DataTable
+        $('#dataTable').DataTable({
+            "order": [[ 0, "asc" ]],
+            "lengthMenu": [10, 25, 50, 100],
+            "language": {
+                "lengthMenu": "Ko'rsatish _MENU_ yozuvlar",
+                "zeroRecords": "Hech narsa topilmadi",
+                "info": "Sahifa _PAGE_ dan _PAGES_ gacha",
+                "infoEmpty": "Hech narsa topilmadi",
+                "infoFiltered": "(filtrlangan _MAX_ yozuvlardan)",
+                "search": "Qidirish:",
+                "paginate": {
+                    "first": "Birinchi",
+                    "last": "Oxirgi",
+                    "next": "Keyingi",
+                    "previous": "Oldingi"
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

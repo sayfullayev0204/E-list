@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Saylov tizimi{% endblock %}</title>
+    <link rel="logo" type="png" href="/static/logo.png">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --light-color: #f8f9fc;
+            --dark-color: #5a5c69;
+            --sidebar-width: 250px;
+            --sidebar-collapsed-width: 80px;
+        }
+
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f8f9fc;
+        }
+        
+        .wrapper {
+            display: flex;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        .sidebar {
+            min-width: var(--sidebar-width);
+            max-width: var(--sidebar-width);
+            background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+            color: #fff;
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar.active {
+            min-width: var(--sidebar-width);
+            max-width: var(--sidebar-width);
+            transform: translateX(0);
+        }
+
+        @media (max-width: 767.98px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            #content {
+                margin-left: 0;
+            }
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar ul.components {
+            padding: 20px 0;
+            flex-grow: 1;
+        }
+
+        .sidebar ul li a {
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar ul li a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar ul li.active > a {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+            border-left: 4px solid #fff;
+        }
+
+        .sidebar ul li a i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.1);
+            text-align: center;
+            font-size: 0.8em;
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            color: #adb5bd;
+        }
+
+        #content {
+            width: 100%;
+            min-height: 100vh;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            margin-left: var(--sidebar-width);
+        }
+
+        @media (max-width: 767.98px) {
+            #content {
+                margin-left: 0;
+            }
+        }
+
+        .navbar {
+            padding: 15px 10px;
+            background: #fff;
+            border: none;
+            border-radius: 0;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        #sidebarCollapsee, #sidebarClose {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+        }
+
+        #sidebarCollapsee:hover, #sidebarClose:hover {
+            background: #2e59d9;
+        }
+
+        @media (min-width: 768px) {
+            #sidebarCollapsee, #sidebarClose {
+                display: none;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="sidebar-overlay"></div>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <img src="/static/logo.png" style="max-width: 100px;" alt="">
+                <button type="button" id="sidebarClose" class="btn btn-sm d-block d-md-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li class="{% if request.path == '/' %}active{% endif %}">
+                    <a style="gap: 10px;" href="{% url 'home' %}">
+                        <i class="fas fa-home"></i> <span>Bosh sahifa</span>
+                    </a>
+                </li>
+                <li class="{% if 'commission-members' in request.path %}active{% endif %}">
+                    <a style="gap: 10px;" href="{% url 'commission_member_list' %}">
+                        <i class="fas fa-users"></i> <span>USK A'zolari</span>
+                    </a>
+                </li>
+                <li class="{% if 'districts' in request.path %}active{% endif %}">
+                    <a style="gap: 10px;" href="{% url 'election_district_list' %}">
+                        <i class="fas fa-map-marker-alt"></i> <span>Saylov uchastkalari</span>
+                    </a>
+                </li>
+                <li class="{% if 'representatives' in request.path %}active{% endif %}">
+                    <a style="gap: 10px;" href="{% url 'representative_list' %}">
+                        <i class="fas fa-user-tie"></i> <span>Vakolatli vakillar</span>
+                    </a>
+                </li>
+                <li class="{% if 'observers' in request.path %}active{% endif %}">
+                    <a style="gap: 10px;" href="{% url 'observer_list' %}">
+                        <i class="fas fa-eye"></i> <span>Kuzatuvchilar</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <p>© 2025 E-ro'yxat</p>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapsee" class="btn btn-sm d-block d-md-none">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                    <div class="ms-auto d-flex">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user"></i> Admin
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> {{user.username}}</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}" style="color: red;"><i class="fas fa-sign-out-alt"></i> Chiqish</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-fluid py-4">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom JS -->
+    <script>
+        $(document).ready(function() {
+            // Toggle sidebar for mobile
+            $('#sidebarCollapsee, #sidebarClose').on('click', function() {
+                $('#sidebar').toggleClass('active');
+                $('.sidebar-overlay').fadeToggle(200);
+                $('body').toggleClass('sidebar-open');
+            });
+
+            // Toggle sidebar for desktop
+            $('#sidebarCollapseDesktop').on('click', function() {
+                $('#sidebar').toggleClass('active');
+                $('#content').toggleClass('active');
+            });
+
+            // Close sidebar when clicking overlay
+            $('.sidebar-overlay').on('click', function() {
+                $('#sidebar').removeClass('active');
+                $('.sidebar-overlay').fadeOut(200);
+                $('body').removeClass('sidebar-open');
+            });
+
+            // Hide sidebar on scroll down (mobile only)
+            let lastScrollTop = 0;
+            $(window).scroll(function() {
+                if ($(window).width() <= 767.98) {
+                    let st = $(this).scrollTop();
+                    if (Math.abs(st - lastScrollTop) > 50) {
+                        lastScrollTop = st;
+                        if (st > lastScrollTop && $('#sidebar').hasClass('active')) {
+                            $('#sidebar').removeClass('active');
+                            $('.sidebar-overlay').fadeOut(200);
+                            $('body').removeClass('sidebar-open');
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

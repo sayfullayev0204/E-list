@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}USK A'zosini o'chirish - Saylov tizimi{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800">USK A'zosini o'chirish</h1>
+    <a href="{% url 'commission_member_list' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Orqaga
+    </a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">{{ member.full_name }}</h6>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-danger">
+            <p>Siz haqiqatan ham ushbu a'zoni o'chirmoqchimisiz?</p>
+            <p><strong>{{ member.full_name }}</strong> - {{ member.district.district_number }}</p>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash"></i> O'chirish
+            </button>
+            <a href="{% url 'commission_member_list' %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Bekor qilish
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

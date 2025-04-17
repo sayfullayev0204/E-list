@@ -1,0 +1,331 @@
+{% extends 'base.html' %}
+
+{% block title %}Bosh sahifa - Saylov tizimi{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 mb-0 text-gray-800">Statistika</h1>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <!-- Saylov uchastkalar soni -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Saylov uchastkalar soni
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ districts_count }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-map-marker-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Uchasktka saylov komissiyasi a'zolari -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Komissiya a'zolari
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ members_count }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Erkaklar -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Erkaklar
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ male_count }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-male fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ayollar -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Ayollar
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ female_count }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-female fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- District Table and Age Chart -->
+    <div class="row mb-4">
+        <!-- District Table -->
+        <div class="col-xl-6 col-lg-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Tumanlar kesimida</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tuman nomi</th>
+                                    <th>Saylov uchastkasi raqami</th>
+                                    <th>USK a'zolari</th>
+                                    <th>Kuzatuvchilar</th>
+                                    <th>Jami</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for district in district_data %}
+                                <tr>
+                                    <td>{{ district.name }}</td>
+                                    <td>{{ district.district_number }}</td>
+                                    <td>{{ district.commission_member_count }}</td>
+                                    <td>{{ district.observer_count }}</td>
+                                    <td>{{ district.total_count }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5">Ma'lumotlar mavjud emas</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Age Distribution Chart -->
+        <div class="col-xl-6 col-lg-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Yosh bo'yicha taqsimot</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="ageChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nationality, Education, Specialization Tables -->
+    <div class="row">
+        <!-- Nationality Distribution -->
+        <div class="col-xl-4 col-lg-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Millati</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Millati</th>
+                                    <th>Soni</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for nationality in nationalities %}
+                                <tr>
+                                    <td>{{ nationality.nationality }}</td>
+                                    <td>{{ nationality.count }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="2">Ma'lumotlar mavjud emas</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Education Distribution -->
+        <div class="col-xl-4 col-lg-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Ma'lumoti</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Ma'lumoti</th>
+                                    <th>Soni</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for education in educations %}
+                                <tr>
+                                    <td>{{ education.education }}</td>
+                                    <td>{{ education.count }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="2">Ma'lumotlar mavjud emas</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Specialization Distribution -->
+        <div class="col-xl-4 col-lg-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Mutaxassisligi</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Mutaxassisligi</th>
+                                    <th>Soni</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for specialization in specializations %}
+                                <tr>
+                                    <td>{{ specialization.specialization }}</td>
+                                    <td>{{ specialization.count }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="2">Ma'lumotlar mavjud emas</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Age Chart
+    var ageCtx = document.getElementById('ageChart').getContext('2d');
+    var ageChart = new Chart(ageCtx, {
+        type: 'bar',
+        data: {
+            labels: ['18-30', '31-45', '46-60', '60+'],
+            datasets: [{
+                label: "Soni",
+                backgroundColor: "#4e73df",
+                hoverBackgroundColor: "#2e59d9",
+                borderColor: "#4e73df",
+                data: [
+                    {{ age_groups.age_18_30|default:0 }},
+                    {{ age_groups.age_31_45|default:0 }},
+                    {{ age_groups.age_46_60|default:0 }},
+                    {{ age_groups.age_60_plus|default:0 }}
+                ],
+            }],
+        },
+        options: {
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 25,
+                    top: 25,
+                    bottom: 0
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false,
+                        drawBorder: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 6
+                    },
+                    maxBarThickness: 25,
+                },
+                y: {
+                    ticks: {
+                        min: 0,
+                        maxTicksLimit: 5,
+                        padding: 10,
+                    },
+                    grid: {
+                        color: "rgb(234, 236, 244)",
+                        zeroLineColor: "rgb(234, 236, 244)",
+                        drawBorder: false,
+                        borderDash: [2],
+                        zeroLineBorderDash: [2]
+                    }
+                },
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    titleMarginBottom: 10,
+                    titleFont: {
+                        size: 14
+                    },
+                    titleColor: '#6e707e',
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyColor: "#858796",
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    caretPadding: 10,
+                },
+            },
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+
+{% block title %}USK A'zolari - Saylov tizimi{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800">USK A'zolari</h1>
+    <div>
+        <a href="{% url 'commission_member_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Qo'shish
+        </a>
+        <div class="btn-group">
+            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-download"></i> Export
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'export_commission_members_excel' %}">Excel</a></li>
+                <li><a class="dropdown-item" href="{% url 'export_commission_members_pdf' %}">PDF</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Qidiruv va filtrlash</h6>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                {{ filter.form.full_name.label_tag }}
+                {{ filter.form.full_name }}
+            </div>
+            <div class="col-md-3">
+                {{ filter.form.district.label_tag }}
+                {{ filter.form.district }}
+            </div>
+            <div class="col-md-3">
+                {{ filter.form.nationality.label_tag }}
+                {{ filter.form.nationality }}
+            </div>
+            <div class="col-md-3">
+                {{ filter.form.gender.label_tag }}
+                {{ filter.form.gender }}
+            </div>
+            <div class="col-12 mt-3">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Qidirish
+                </button>
+                <a href="{% url 'commission_member_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-redo"></i> Tozalash
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">USK A'zolari ro'yxati</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Uchastka</th>
+                        <th>F.I.Sh.</th>
+                        <th>Rasm</th>
+                        <th>A'zoligi</th>
+                        <th>Millati</th>
+                        <th>Yoshi</th>
+                        <th>Jinsi</th>
+                        <th>Telefon</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in members %}
+                    <tr>
+                        <td>{{ member.district.district_number }}</td>
+                        <td>{{ member.full_name }}</td>
+                        <td>
+                            {% if member.photo %}
+                                <img src="{{ member.photo.url }}" 
+                                     style="max-width: 50px; cursor: pointer;" 
+                                     alt="{{ member.full_name }}"
+                                     onclick="showFullImage('{{ member.photo.url }}')">
+                            {% else %}
+                                <img src="/static/img/no-photo.jpg" 
+                                     style="max-width: 50px;" 
+                                     alt="No Photo">
+                            {% endif %}
+                        </td>
+                        <td>{{ member.membership_role }}</td>
+                        <td>{{ member.nationality }}</td>
+                        <td>{{ member.age }}</td>
+                        <td>
+                            {% if member.gender == 'male' %}
+                                <span class="badge bg-primary">Erkak</span>
+                            {% else %}
+                                <span class="badge bg-danger">Ayol</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ member.phone_number }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#memberModal{{ member.id }}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <a href="{% url 'commission_member_update' member.id %}" class="btn btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'commission_member_delete' member.id %}" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                            
+                            <!-- Member Modal -->
+                            <div class="modal fade" id="memberModal{{ member.id }}" tabindex="-1" aria-labelledby="memberModalLabel{{ member.id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="memberModalLabel{{ member.id }}">{{ member.full_name }}</h5>
+                                            <button type="button" class="btn-close" style="color: red;" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-4 text-center mb-3">
+                                                    {% if member.photo %}
+                                                        <img src="{{ member.photo.url }}" 
+                                                             alt="{{ member.full_name }}" 
+                                                             class="img-fluid rounded"
+                                                             style="cursor: pointer;"
+                                                             onclick="showFullImage('{{ member.photo.url }}')">
+                                                    {% else %}
+                                                        no photo 
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <table class="table">
+                                                        <tr>
+                                                            <th>Uchastka raqami:</th>
+                                                            <td>{{ member.district.district_number }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>A'zoligi:</th>
+                                                            <td>{{ member.membership_role }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Tug'ilgan sanasi:</th>
+                                                            <td>{{ member.birth_date }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Tug'ilgan joyi:</th>
+                                                            <td>{{ member.birth_place }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Millati:</th>
+                                                            <td>{{ member.nationality }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Ma'lumoti:</th>
+                                                            <td>{{ member.education }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Mutaxassisligi:</th>
+                                                            <td>{{ member.specialization }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Ish joyi va lavozimi:</th>
+                                                            <td>{{ member.workplace }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Telefon raqami:</th>
+                                                            <td>{{ member.phone_number }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Jinsi:</th>
+                                                            <td>
+                                                                {% if member.gender == 'male' %}
+                                                                    Erkak
+                                                                {% else %}
+                                                                    Ayol
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center">Ma'lumotlar topilmadi</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Full Image Modal -->
+        <div class="modal fade" id="fullImageModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content bg-transparent border-0">
+                    <div class="modal-body p-0 position-relative">
+                        <img id="fullImage" src="" alt="Full size image" class="img-fluid w-100">
+                        <button type="button" class="btn-close btn-close-white position-absolute" 
+                                style="top: 10px; right: 10px; z-index: 1000; color: red;" 
+                                data-bs-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="First">
+                        <span aria-hidden="true">««</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Previous">
+                        <span aria-hidden="true">«</span>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Next">
+                        <span aria-hidden="true">»</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Last">
+                        <span aria-hidden="true">»»</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+
+<!-- JavaScript for image preview -->
+<script>
+function showFullImage(imageUrl) {
+    const fullImage = document.getElementById('fullImage');
+    fullImage.src = imageUrl;
+    
+    const fullImageModal = new bootstrap.Modal(document.getElementById('fullImageModal'));
+    fullImageModal.show();
+}
+</script>
+
+<!-- CSS for image preview -->
+<style>
+#fullImageModal .modal-dialog {
+    max-width: 90vw;
+    margin: 30px auto;
+}
+
+#fullImageModal .modal-content {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+#fullImage {
+    max-height: 80vh;
+    object-fit: contain;
+}
+</style>
+{% endblock %}

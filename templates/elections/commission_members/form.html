@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if member %}USK A'zosini tahrirlash{% else %}Yangi USK A'zosi{% endif %} - Saylov tizimi
+{% endblock %}
+{% if form.errors %}
+<div class="alert alert-danger">
+    <strong>Xatolik!</strong> Quyidagi maydonlarda xatoliklar mavjud.
+</div>
+{% endif %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        {% if member %}USK A'zosini tahrirlash{% else %}Yangi USK A'zosi{% endif %}
+    </h1>
+    <a href="{% url 'commission_member_list' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Orqaga
+    </a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+            {% if member %}{{ member.full_name }}{% else %}Yangi a'zo ma'lumotlari{% endif %}
+        </h6>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Xatolik!</strong> Quyidagi maydonlarda xatoliklar:
+                <ul>
+                {% for field in form %}
+                    {% if field.errors %}
+                    <li>{{ field.label }}: {{ field.errors|striptags }}</li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form.district|as_crispy_field }}
+                    {{ form.membership_role|as_crispy_field }}
+                    {{ form.full_name|as_crispy_field }}
+                    {{ form.birth_date|as_crispy_field }}
+                    {{form.district_address|as_crispy_field}}
+                    {{ form.birth_place|as_crispy_field }}
+                    {{ form.nationality|as_crispy_field }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.education|as_crispy_field }}
+                    {{ form.specialization|as_crispy_field }}
+                    {{ form.workplace|as_crispy_field }}
+                    {{ form.phone_number|as_crispy_field }}
+                    {{ form.gender|as_crispy_field }}
+                    {{ form.photo|as_crispy_field }}
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Saqlash
+                </button>
+                <a href="{% url 'commission_member_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Bekor qilish
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

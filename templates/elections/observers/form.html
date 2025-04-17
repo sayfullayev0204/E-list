@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if representative %}Kuzatuvchilarni tahrirlash{% else %}Yangi Kuzatuvchilar{% endif %} - Saylov tizimi
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        {% if observer %}Kuzatuvchilarni tahrirlash{% else %}Yangi Kuzatuvchilar vakil{% endif %}
+    </h1>
+    <a href="{% url 'observer_list' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Orqaga
+    </a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+            {% if observer %}{{ observer.full_name }}{% else %}Yangi vakil ma'lumotlari{% endif %}
+        </h6>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form.party_name|as_crispy_field }}
+                    {{ form.district|as_crispy_field }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.full_name|as_crispy_field }}
+                    {{ form.workplace|as_crispy_field }}
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Saqlash
+                </button>
+                <a href="{% url 'representative_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Bekor qilish
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
