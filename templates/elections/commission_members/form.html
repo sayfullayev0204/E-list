@@ -26,7 +26,7 @@
         </h6>
     </div>
     <div class="card-body">
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" id="member-form">
             {% csrf_token %}
             {% if form.errors %}
             <div class="alert alert-danger">
@@ -46,7 +46,7 @@
                     {{ form.membership_role|as_crispy_field }}
                     {{ form.full_name|as_crispy_field }}
                     {{ form.birth_date|as_crispy_field }}
-                    {{form.district_address|as_crispy_field}}
+                    {{ form.district_address|as_crispy_field }}
                     {{ form.birth_place|as_crispy_field }}
                     {{ form.nationality|as_crispy_field }}
                 </div>
@@ -54,7 +54,20 @@
                     {{ form.education|as_crispy_field }}
                     {{ form.specialization|as_crispy_field }}
                     {{ form.workplace|as_crispy_field }}
-                    {{ form.phone_number|as_crispy_field }}
+                    <div class="form-group">
+                        <label for="{{ form.phone_number.id_for_label }}">Telefon raqami</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">+998</span>
+                            </div>
+                            <input type="text" name="{{ form.phone_number.name }}" id="{{ form.phone_number.id_for_label }}"
+                                   class="form-control phone-mask" value="{{ form.phone_number.value|default:'' }}"
+                                   maxlength="9" placeholder="99 999 99 99">
+                        </div>
+                        <small class="form-text text-danger" id="phone-error" style="display: none;">
+                            Telefon raqami 9 ta raqamdan iborat bo'lishi kerak!
+                        </small>
+                    </div>
                     {{ form.gender|as_crispy_field }}
                     {{ form.photo|as_crispy_field }}
                 </div>
@@ -71,4 +84,42 @@
         </form>
     </div>
 </div>
+
+<!-- Inputmask va jQuery kutubxonalarini ulash -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.6/jquery.inputmask.min.js"></script>
+<script>
+    $(document).ready(function(){
+    // Inputmask sozlamasi: faqat 9 ta raqam
+    $('.phone-mask').inputmask('99 999 99 99', {
+        placeholder: "_",
+        clearMaskOnLostFocus: false,
+        showMaskOnHover: true,
+        showMaskOnFocus: true,
+        greedy: false, // Ortiqcha raqamlarni qabul qilmaslik
+        onBeforePaste: function(pastedValue, opts) {
+            var digits = pastedValue.replace(/\D/g, '').slice(0, 9); // Faqat 9 ta raqam
+            return digits.replace(/(\d{2})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4');
+        },
+        onincomplete: function() {
+            $('#phone-error').show(); // Agar to'liq kiritilmasa xato ko'rsatish
+        },
+        oncomplete: function() {
+            $('#phone-error').hide(); // To'g'ri kiritilganda xatoni yashirish
+        }
+    });
+
+    // Forma yuborilishdan oldin qo'shimcha tekshirish
+    $('#member-form').on('submit', function(e) {
+        var phoneInput = $('.phone-mask').val();
+        var digits = phoneInput.replace(/\D/g, '');
+        if (digits.length !== 9) {
+            e.preventDefault();
+            $('#phone-error').show();
+        } else {
+            $('#phone-error').hide();
+        }
+    });
+});
+</script>
 {% endblock %}

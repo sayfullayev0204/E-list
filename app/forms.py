@@ -38,7 +38,10 @@ class CommissionMemberForm(forms.ModelForm):
             'birth_date', 'age', 'birth_place', 'nationality', 'education', 
             'district_address', 'specialization', 'workplace', 'phone_number', 'gender'
         ]
-
+        widgets = {
+            'phone_number': forms.TextInput(attrs={'class': 'form-control phone-mask'})
+        }
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.birth_date:

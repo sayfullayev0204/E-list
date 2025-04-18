@@ -98,7 +98,7 @@
                 <tbody>
                     {% for member in members %}
                     <tr>
-                        <td>{{ member.district.district_number }}</td>
+                        <td>+998{{ member.district.district_number }}</td>
                         <td>{{ member.full_name }}</td>
                         <td>
                             {% if member.photo %}
@@ -122,7 +122,7 @@
                                 <span class="badge bg-danger">Ayol</span>
                             {% endif %}
                         </td>
-                        <td>{{ member.phone_number }}</td>
+                        <td>+998{{ member.phone_number }}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
                                 <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#memberModal{{ member.id }}">
