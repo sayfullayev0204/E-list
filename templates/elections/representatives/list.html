@@ -5,9 +5,20 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0 text-gray-800">Vakolatli vakillar</h1>
-    <a href="{% url 'representative_create' %}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Qo'shish
-    </a>
+    <div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-download"></i> Export
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'export_representatives_excel' %}"><i class="fas fa-file-excel me-2"></i>Excel</a></li>
+                <li><a class="dropdown-item" href="{% url 'export_representatives_pdf' %}"><i class="fas fa-file-pdf me-2"></i>PDF</a></li>
+            </ul>
+        </div>
+        <a href="{% url 'representative_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Qo'shish
+        </a>
+    </div>
 </div>
 
 <div class="card shadow mb-4">

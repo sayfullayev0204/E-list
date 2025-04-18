@@ -57,6 +57,26 @@
 
 <div class="card shadow mb-4">
     <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Tumanlar</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <div class="mb-4" style="gap: 10px;" role="group" aria-label="District filter">
+                <a href="{% url 'commission_member_list' %}" class="btn btn-outline-secondary {% if not request.GET.district %}active{% endif %}">
+                    Qashqadaryo viloyati
+                </a>
+                {% for district in districts %}
+                    <a href="?district={{ district.0 }}" class="btn btn-outline-primary {% if request.GET.district == district.0 %}active{% endif %}">
+                        {{ district.1 }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">USK A'zolari ro'yxati</h6>
     </div>
     <div class="card-body">

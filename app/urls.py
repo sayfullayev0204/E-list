@@ -30,10 +30,14 @@ urlpatterns = [
     path('representatives/create/', views.representative_create, name='representative_create'),
     path('representatives/<int:pk>/update/', views.representative_update, name='representative_update'),
     path('representatives/<int:pk>/delete/', views.representative_delete, name='representative_delete'),
+    path('representatives/export/excel/', views.export_representatives_excel, name='export_representatives_excel'),
+    path('representatives/export/pdf/', views.export_representatives_pdf, name='export_representatives_pdf'),
     
     # Observers
     path('observers/', views.ObserverListView.as_view(), name='observer_list'),
     path('observers/create/', views.observer_create, name='observer_create'),
     path('observers/<int:pk>/update/', views.observer_update, name='observer_update'),
     path('observers/<int:pk>/delete/', views.observer_delete, name='observer_delete'),
+    path('observers/export/excel/', views.export_observers_excel, name='export_observers_excel'),
+    path('observers/export/pdf/', views.export_observers_pdf, name='export_observers_pdf'),
 ]

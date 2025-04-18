@@ -47,22 +47,22 @@ UNFOLD = {
                     {
                         "title": ("Saylov Uchastkalari"),
                         "icon": "place",
-                        "link": "/admin/your_app_name/electiondistrict/",
+                        "link": "/admin/app/electiondistrict/",
                     },
                     {
                         "title": ("USK A'zolari"),
                         "icon": "people",
-                        "link": "/admin/your_app_name/commissionmember/",
+                        "link": "/admin/app/commissionmember/",
                     },
                     {
                         "title": ("Vakolatli Vakillar"),
                         "icon": "person",
-                        "link": "/admin/your_app_name/representative/",
+                        "link": "/admin/app/representative/",
                     },
                     {
                         "title": ("Kuzatuvchilar"),
                         "icon": "visibility",
-                        "link": "/admin/your_app_name/observer/",
+                        "link": "/admin/app/observer/",
                     },
                 ],
             },
@@ -85,27 +85,27 @@ UNFOLD = {
     "TABS": [
         {
             "models": [
-                "your_app_name.electiondistrict",
-                "your_app_name.commissionmember",
-                "your_app_name.representative",
-                "your_app_name.observer",
+                "app.electiondistrict",
+                "app.commissionmember",
+                "app.representative",
+                "app.observer",
             ],
             "items": [
                 {
                     "title": ("Saylov Uchastkalari"),
-                    "link": "/admin/your_app_name/electiondistrict/",
+                    "link": "/admin/app/electiondistrict/",
                 },
                 {
                     "title": ("USK A'zolari"),
-                    "link": "/admin/your_app_name/commissionmember/",
+                    "link": "/admin/app/commissionmember/",
                 },
                 {
                     "title": ("Vakolatli Vakillar"),
-                    "link": "/admin/your_app_name/representative/",
+                    "link": "/admin/app/representative/",
                 },
                 {
                     "title": ("Kuzatuvchilar"),
-                    "link": "/admin/your_app_name/observer/",
+                    "link": "/admin/app/observer/",
                 },
             ],
         },

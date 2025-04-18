@@ -5,9 +5,20 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0 text-gray-800">Kuzatuvchilar</h1>
-    <a href="{% url 'observer_create' %}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Qo'shish
-    </a>
+    <div>
+        <a href="{% url 'observer_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Qo'shish
+        </a>
+        <div class="btn-group">
+            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-download"></i> Export
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'export_observers_excel' %}"><i class="fas fa-file-excel me-2"></i>Excel</a></li>
+                <li><a class="dropdown-item" href="{% url 'export_observers_pdf' %}"><i class="fas fa-file-pdf me-2"></i>PDF</a></li>
+            </ul>
+        </div>
+    </div>
 </div>
 
 <div class="card shadow mb-4">
@@ -51,63 +62,78 @@
                     <tr>
                         <th>F.I.Sh.</th>
                         <th>Partiya</th>
-                        <th>Hudud</th>
-                        <th>Telefon raqami</th>
-                        <th>Holati</th>
+                        <th>Uchastka</th>
+                        <th>Ish joyi va lavozimi</th>
                         <th>Amallar</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for observer in filter.qs %}
+                    {% for observer in observers %}
                     <tr>
                         <td>{{ observer.full_name }}</td>
-                        <td>{{ observer.party_name }}</td>
-                        <td>{{ observer.district }}</td>
-                        <td>{{ observer.phone_number }}</td>
-                        <td>{% if observer.is_active %}Faol{% else %}Faol emas{% endif %}</td>
+                        <td>{{ observer.get_party_name_display }}</td>
+                        <td>{{ observer.district.district_number }}</td>
+                        <td>{{ observer.workplace }}</td>
                         <td>
-                            <a href="{% url 'observer_update' observer.id %}" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i> Tahrirlash
-                            </a>
-                            <a href="{% url 'observer_delete' observer.id %}" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash"></i> O'chirish
-                            </a>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'observer_update' observer.id %}" class="btn btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'observer_delete' observer.id %}" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center">Kuzatuvchilar topilmadi</td>
+                        <td colspan="5" class="text-center">Ma'lumotlar topilmadi</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="First">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Last">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    $(document).ready(function() {
-        // Initialize DataTable
-        $('#dataTable').DataTable({
-            "order": [[ 0, "asc" ]],
-            "lengthMenu": [10, 25, 50, 100],
-            "language": {
-                "lengthMenu": "Ko'rsatish _MENU_ yozuvlar",
-                "zeroRecords": "Hech narsa topilmadi",
-                "info": "Sahifa _PAGE_ dan _PAGES_ gacha",
-                "infoEmpty": "Hech narsa topilmadi",
-                "infoFiltered": "(filtrlangan _MAX_ yozuvlardan)",
-                "search": "Qidirish:",
-                "paginate": {
-                    "first": "Birinchi",
-                    "last": "Oxirgi",
-                    "next": "Keyingi",
-                    "previous": "Oldingi"
-                }
-            }
-        });
-    });
-</script>
 {% endblock %}

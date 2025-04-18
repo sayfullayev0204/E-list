@@ -49,18 +49,23 @@ def home(request):
         'age_46_60': CommissionMember.objects.filter(age__gte=46, age__lte=60).count(),
         'age_60_plus': CommissionMember.objects.filter(age__gt=60).count(),
     }
-    districts = ElectionDistrict.objects.all()
     
-    # Prepare data for each district
+    # Group ElectionDistrict by city_name and count the number of districts per city
+    district_counts = ElectionDistrict.objects.values('city_name').annotate(
+        district_count=Count('id')
+    ).order_by('city_name')
+    
+    # Prepare data for each city_name
     district_data = []
-    for district in districts:
-        # Count related commission members and observers
-        commission_member_count = CommissionMember.objects.filter(district=district).count()
-        observer_count = Observer.objects.filter(district=district).count()
+    for district in district_counts:
+        city_name = district['city_name']
+        # Count related commission members and observers for all districts in this city
+        commission_member_count = CommissionMember.objects.filter(district__city_name=city_name).count()
+        observer_count = Observer.objects.filter(district__city_name=city_name).count()
         
         district_data.append({
-            'name': district.city_name,
-            'district_number': district.district_number,
+            'name': city_name,
+            'district_count': district['district_count'],  # Number of election districts in this city
             'commission_member_count': commission_member_count,
             'observer_count': observer_count,
             'total_count': commission_member_count + observer_count  # Total related records
@@ -79,8 +84,7 @@ def home(request):
     }
     
     return render(request, 'elections/home.html', context)
-
-
+from .models import CommissionMember, DISTRICT_CHOICES
 class CommissionMemberListView(LoginRequiredMixin,ListView):
     model = CommissionMember
     template_name = 'elections/commission_members/list.html'
@@ -95,8 +99,23 @@ class CommissionMemberListView(LoginRequiredMixin,ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.filterset
+        context['districts'] = DISTRICT_CHOICES  # Add DISTRICT_CHOICES to context
         return context
-    
+
+import django_filters
+from .models import CommissionMember, DISTRICT_CHOICES
+from django import forms
+
+class CommissionMemberFilter(django_filters.FilterSet):
+    full_name = django_filters.CharFilter(lookup_expr='icontains', label='F.I.Sh.',widget=forms.TextInput(attrs={'class': 'form-control'}))
+    district = django_filters.ChoiceFilter(choices=DISTRICT_CHOICES, field_name='district_address', label='Tuman',widget=forms.Select(attrs={'class': 'form-control'}))
+    nationality = django_filters.CharFilter(lookup_expr='icontains', label='Millati',widget=forms.TextInput(attrs={'class': 'form-control'}))
+    gender = django_filters.ChoiceFilter(choices=[('male', 'Erkak'), ('female', 'Ayol')], label='Jinsi',widget=forms.Select(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = CommissionMember
+        fields = ['full_name', 'district', 'nationality', 'gender']
+        
 @login_required
 def commission_member_create(request):
     if request.method == 'POST':
@@ -485,6 +504,156 @@ def observer_create(request):
         form = ObserverForm()
     
     return render(request, 'elections/observers/form.html', {'form': form})
+
+def export_representatives_excel(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="representatives.xls"'
+    
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Vakolatli vakillar')
+    
+    # Sheet header
+    row_num = 0
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    
+    columns = ['Partiya', 'Tuman (shahar) kengashi', 'F.I.Sh.', 'Ish joyi va lavozimi']
+    
+    for col_num, column_title in enumerate(columns):
+        ws.write(row_num, col_num, column_title, font_style)
+    
+    # Sheet body
+    font_style = xlwt.XFStyle()
+    
+    representatives = Representative.objects.all()
+    
+    for representative in representatives:
+        row_num += 1
+        row = [
+            representative.get_party_name_display(),  # Use get_party_name_display() instead of dict lookup
+            representative.city_council,
+            representative.full_name,
+            representative.workplace
+        ]
+        
+        for col_num, cell_value in enumerate(row):
+            ws.write(row_num, col_num, str(cell_value), font_style)
+    
+    wb.save(response)
+    return response
+
+def export_representatives_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="representatives.pdf"'
+    
+    doc = SimpleDocTemplate(response, pagesize=letter)
+    elements = []
+    
+    # Define table data
+    data = [
+        ['Partiya', 'Tuman (shahar) kengashi', 'F.I.Sh.', 'Ish joyi va lavozimi']
+    ]
+    
+    representatives = Representative.objects.all()
+    for representative in representatives:
+        data.append([
+            representative.get_party_name_display(),  # Use get_party_name_display() instead of dict lookup
+            representative.city_council,
+            representative.full_name,
+            representative.workplace
+        ])
+    
+    # Create table
+    table = Table(data)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+    ]))
+    
+    elements.append(table)
+    doc.build(elements)
+    
+    return response
+
+def export_observers_excel(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="observers.xls"'
+    
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Kuzatuvchilar')
+    
+    # Sheet header
+    row_num = 0
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    
+    columns = ['Partiya', 'Uchastka raqami', 'F.I.Sh.', 'Ish joyi va lavozimi']
+    
+    for col_num, column_title in enumerate(columns):
+        ws.write(row_num, col_num, column_title, font_style)
+    
+    # Sheet body
+    font_style = xlwt.XFStyle()
+    
+    observers = Observer.objects.all().select_related('district')
+    
+    for observer in observers:
+        row_num += 1
+        row = [
+            observer.get_party_name_display(),  # Use get_party_name_display() instead of dict lookup
+            observer.district.district_number,
+            observer.full_name,
+            observer.workplace
+        ]
+        
+        for col_num, cell_value in enumerate(row):
+            ws.write(row_num, col_num, str(cell_value), font_style)
+    
+    wb.save(response)
+    return response
+
+def export_observers_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="observers.pdf"'
+    
+    doc = SimpleDocTemplate(response, pagesize=letter)
+    elements = []
+    
+    # Define table data
+    data = [
+        ['Partiya', 'Uchastka raqami', 'F.I.Sh.', 'Ish joyi va lavozimi']
+    ]
+    
+    observers = Observer.objects.all().select_related('district')
+    for observer in observers:
+        data.append([
+            observer.get_party_name_display(),  # Use get_party_name_display() instead of dict lookup
+            observer.district.district_number,
+            observer.full_name,
+            observer.workplace
+        ])
+    
+    # Create table
+    table = Table(data)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+    ]))
+    
+    elements.append(table)
+    doc.build(elements)
+    
+    return response
 
 @login_required
 def observer_update(request, pk):

@@ -1,112 +1,30 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Register</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
-        }
-        h2 {
-            text-align: center;
-            color: #333;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            margin-bottom: 5px;
-            color: #555;
-            font-size: 14px;
-        }
-        input {
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
-            box-sizing: border-box;
-            width: 100%;
-        }
-        button {
-            padding: 12px;
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        p {
-            text-align: center;
-            margin-top: 15px;
-        }
-        a {
-            color: #007bff;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
+{% extends 'base.html' %}
 
-        /* Mobile-specific styles */
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-                align-items: flex-start;
-            }
-            .container {
-                max-width: 100%;
-                padding: 15px;
-                margin: 20px auto;
-                margin-top: 200px;
-            }
-            h2 {
-                font-size: 20px;
-                margin-bottom: 15px;
-            }
-            input {
-                padding: 8px;
-                font-size: 14px;
-            }
-            button {
-                padding: 10px;
-                font-size: 14px;
-            }
-            label {
-                font-size: 12px;
-            }
-            a {
-                font-size: 12px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2>Ro'yxatdan o'tish</h2>
+{% block title %}Admin qo'shish - Saylov tizimi{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="row mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+        <h2>Admin qo'shish</h2>
+    </div>
+    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ districts_count }}</div>
+</div>
         <form method="post">
             {% csrf_token %}
             <label for="username">Username:</label>
@@ -115,9 +33,74 @@
             <input type="text" id="name" name="name" required>
             <label for="password">Parol:</label>
             <input type="password" id="password" name="password" required>
-            <button type="submit">Ro'yxatdan o'tish</button>
+            <select name="role" id="role" class="form-control" required>
+                <option value="">--- Roleni Tanlang ---</option>
+                {% for role_value, role_name in role_choices %}
+                    <option value="{{ role_value }}">{{ role_name }}</option>
+                {% endfor %}
+            </select><br>
+            <button type="submit" class="btn btn-primary">Qo'shish</button>
         </form>
-        <p><a href="{% url 'login' %}">Login</a></p>
     </div>
-</body>
-</html>
+</div>
+<style>
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+    label {
+        margin-bottom: 5px;
+        color: #555;
+        font-size: 14px;
+    }
+    input {
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+        box-sizing: border-box;
+        width: 100%;
+    }
+    button {
+        padding: 12px;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #218838;
+    }
+
+    /* Mobile-specific styles */
+    @media (max-width: 600px) {
+        body {
+            padding: 10px;
+            align-items: flex-start;
+        }
+        .container {
+            max-width: 100%;
+            padding: 15px;
+            margin: 20px auto;
+            margin-top: 200px;
+        }
+        h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        input {
+            padding: 8px;
+            font-size: 14px;
+        }
+        button {
+            padding: 10px;
+            font-size: 14px;
+        }
+        label {
+            font-size: 12px;
+        }
+    }
+</style>
+{% endblock %}

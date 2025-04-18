@@ -189,35 +189,52 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-
             <ul class="list-unstyled components">
+                
                 <li class="{% if request.path == '/' %}active{% endif %}">
                     <a style="gap: 10px;" href="{% url 'home' %}">
                         <i class="fas fa-home"></i> <span>Bosh sahifa</span>
                     </a>
                 </li>
+                
+                {% if user.userprofile.role == "admin" or user.userprofile.role == "usk" %}
+
                 <li class="{% if 'commission-members' in request.path %}active{% endif %}">
                     <a style="gap: 10px;" href="{% url 'commission_member_list' %}">
                         <i class="fas fa-users"></i> <span>USK A'zolari</span>
                     </a>
                 </li>
+                {% endif %}
+                {% if user.userprofile.role == "admin" or user.userprofile.role == "uchastka" %}
                 <li class="{% if 'districts' in request.path %}active{% endif %}">
                     <a style="gap: 10px;" href="{% url 'election_district_list' %}">
                         <i class="fas fa-map-marker-alt"></i> <span>Saylov uchastkalari</span>
                     </a>
                 </li>
+                {% endif %}
+                {% if user.userprofile.role == "admin" or user.userprofile.role == "vakolatli" %}
                 <li class="{% if 'representatives' in request.path %}active{% endif %}">
                     <a style="gap: 10px;" href="{% url 'representative_list' %}">
                         <i class="fas fa-user-tie"></i> <span>Vakolatli vakillar</span>
                     </a>
                 </li>
+                {% endif %}
+                {% if  user.userprofile.role == "admin" or user.userprofile.role == "kuzatuvchi" %}
                 <li class="{% if 'observers' in request.path %}active{% endif %}">
                     <a style="gap: 10px;" href="{% url 'observer_list' %}">
                         <i class="fas fa-eye"></i> <span>Kuzatuvchilar</span>
                     </a>
                 </li>
+                {% endif %}
+                
+                {% if user.userprofile.role == "admin" %}
+                <li class="{% if 'register' in request.path %}active{% endif %}">
+                    <a style="gap: 10px;" href="{% url 'register' %}">
+                        <i class="fas fa-key"></i> <span>Admin qo'shish</span>
+                    </a>
+                </li>
+                {% endif %}
             </ul>
-
             <div class="sidebar-footer">
                 <p>© 2025 E-ro'yxat</p>
             </div>
@@ -234,7 +251,7 @@
                     <div class="ms-auto d-flex">
                         <div class="dropdown">
                             <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user"></i> Admin
+                                <i class="fas fa-user"></i> {{user.userprofile.get_role_display}}
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> {{user.username}}</a></li>

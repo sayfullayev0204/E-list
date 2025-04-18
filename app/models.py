@@ -11,7 +11,8 @@ PARTY_CHOICES = [
 ]
 
 DISTRICT_CHOICES = [
-    ('qarshi_shaxri', 'Qarshi shaxri'),
+    ('qarshi_shaxri', 'Qarshi shahri'),
+    ('shahrisabz_shaxri', 'Shahrisabz shahri'),
     ('shahrisabz_tumani', 'Shahrisabz tumani'),
     ('guzor_tumani', 'Guzor tumani'),
     ('dehqonobod_tumani', 'Dehqonobod tumani'),
@@ -25,7 +26,6 @@ DISTRICT_CHOICES = [
     ('nishon_tumani', 'Nishon tumani'),
     ('kokdala tumani', 'Ko\'kdala tumani'),
     ('chiroqchi tumani', 'Chiroqchi tumani'),
-    ('shahrisabz_shaxri', 'Shahrisabz shaxri'),
     ('yakkabog_tumani', 'Yakkabog\' tumani'),
 
 ]

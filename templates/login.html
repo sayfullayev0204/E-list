@@ -104,10 +104,20 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container" style="text-align: center" >
+        {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
         <img src="/static/logo.png" style="max-width:100px; text-align: center;">
-        <h2>E-Ro‘yhat</h2><p>Saylovga tayyorgarlik ko‘rish va uni o‘tkazish bo‘yicha saylov uchastkalari, uchastka saylov komissiyasi, kuzatuvchilar, vakolatli vakillarini ro‘yhatga olish raqamli platformasi</p>
+        <p>Saylovga tayyorgarlik ko‘rish va uni o‘tkazish bo‘yicha saylov uchastkalari, uchastka saylov komissiyasi, kuzatuvchilar, vakolatli vakillarini ro‘yhatga olish raqamli platformasi</p>
         <form method="post">
             {% csrf_token %}
             <label for="username" style="text-align: left">         Username:</label>
@@ -116,7 +126,6 @@
             <input type="password" id="password" name="password" required>
             <button type="submit">Kirish</button>
         </form>
-        <p><a href="{% url 'register' %}">Ro'yxatdan o'tish</a></p>
     </div>
 </body>
 </html>

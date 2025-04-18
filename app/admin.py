@@ -3,6 +3,9 @@ from unfold.admin import ModelAdmin
 from unfold.decorators import display
 from .models import ElectionDistrict, CommissionMember, Representative, Observer
 from django.utils.translation import gettext_lazy as _
+from .auth import UserProfile
+
+admin.site.register(UserProfile)
 
 @admin.register(ElectionDistrict)
 class ElectionDistrictAdmin(ModelAdmin):

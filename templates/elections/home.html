@@ -104,7 +104,7 @@
                             <thead>
                                 <tr>
                                     <th>Tuman nomi</th>
-                                    <th>Saylov uchastkasi raqami</th>
+                                    <th>Saylov uchastkalari soni</th> <!-- Updated column header -->
                                     <th>USK a'zolari</th>
                                     <th>Kuzatuvchilar</th>
                                     <th>Jami</th>
@@ -114,7 +114,7 @@
                                 {% for district in district_data %}
                                 <tr>
                                     <td>{{ district.name }}</td>
-                                    <td>{{ district.district_number }}</td>
+                                    <td>{{ district.district_count }}</td> <!-- Display count of districts -->
                                     <td>{{ district.commission_member_count }}</td>
                                     <td>{{ district.observer_count }}</td>
                                     <td>{{ district.total_count }}</td>
@@ -130,7 +130,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Age Distribution Chart -->
         <div class="col-xl-6 col-lg-12 mb-4">
             <div class="card shadow">
