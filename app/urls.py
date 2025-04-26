@@ -1,15 +1,23 @@
 from django.urls import path
 from . import views
-from .auth import register, login_view,logout_view
+from .auth import register, login_view,logout_view,admin_list,edit_admin,delete_admin
 
 
 urlpatterns = [
     # Home
     path('', views.home, name='home'),
+    
+    path('add-member/', views.add_member, name='add_member'),
+    path('check-member/', views.check_member, name='check_member'),
+    path('export-excel/', views.export_excel, name='export_excel'),
     #auth
     path('register/', register, name='register'),
     path('accounts/login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
+    
+    path('admins/', admin_list, name='admin_list'),
+    path('admins/edit/<int:user_id>/', edit_admin, name='edit_admin'),
+    path('admins/delete/<int:user_id>/', delete_admin, name='delete_admin'),
     # Commission Members
     path('commission-members/', views.CommissionMemberListView.as_view(), name='commission_member_list'),
     path('commission-members/create/', views.commission_member_create, name='commission_member_create'),

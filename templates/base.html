@@ -229,8 +229,8 @@
                 
                 {% if user.userprofile.role == "admin" %}
                 <li class="{% if 'register' in request.path %}active{% endif %}">
-                    <a style="gap: 10px;" href="{% url 'register' %}">
-                        <i class="fas fa-key"></i> <span>Admin qo'shish</span>
+                    <a style="gap: 10px;" href="{% url 'admin_list' %}">
+                        <i class="fas fa-key"></i> <span>Adminlar</span>
                     </a>
                 </li>
                 {% endif %}

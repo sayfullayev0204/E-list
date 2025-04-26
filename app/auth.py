@@ -51,6 +51,9 @@ def register(request):
     # Pass role choices to template
     role_choices = UserProfile.ROLE_CHOICES
     return render(request, 'register.html', {"register": "register", "role_choices": role_choices})
+
+
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -70,3 +73,54 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def admin_list(request):
+    # Faqat admin rollariga ega foydalanuvchilarni olish
+    admins = UserProfile.objects.filter(role='admin').select_related('user')
+    return render(request, 'admin_list.html', {'admins': admins})
+
+@login_required
+def edit_admin(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    profile = get_object_or_404(UserProfile, user=user, role='admin')
+    
+    if request.method == 'POST':
+        username = request.POST['username']
+        name = request.POST['name']
+        password = request.POST['password']
+        
+        # Username boshqa foydalanuvchi tomonidan ishlatilmayotganligini tekshirish
+        if User.objects.filter(username=username).exclude(id=user.id).exists():
+            messages.error(request, "Bu foydalanuvchi nomi allaqachon mavjud.")
+            return redirect('edit_admin', user_id=user_id)
+        
+        # Foydalanuvchi ma'lumotlarini yangilash
+        user.username = username
+        user.first_name = name
+        if password:
+            user.set_password(password)
+        user.save()
+        
+        messages.success(request, "Admin muvaffaqiyatli tahrirlandi!")
+        return redirect('admin_list')
+    
+    return render(request, 'edit_admin.html', {'user': user, 'profile': profile})
+
+@login_required
+def delete_admin(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    profile = get_object_or_404(UserProfile, user=user, role='admin')
+    
+    if request.method == 'POST':
+        user.delete()
+        messages.success(request, "Admin muvaffaqiyatli o'chirildi!")
+        return redirect('admin_list')
+    
+    return render(request, 'delete_admin.html', {'user': user})

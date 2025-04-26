@@ -1,329 +1,250 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Bosh sahifa - Saylov tizimi{% endblock %}
+{% block title %}Saylov Ma'lumotlari{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Page Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="h3 mb-0 text-gray-800">Statistika</h1>
-        </div>
+<div class="container-fluid mt-4">
+    <h1 class="text-center mb-4">Saylov A'zolari Statistikasi</h1>
+    
+    <div class="actions mb-4 text-center">
+        <a href="{% url 'add_member' %}" class="btn btn-success">A'zo qo'shish</a>
+        <a href="{% url 'export_excel' %}" class="btn btn-info">Excel'ga eksport qilish</a>
     </div>
-
-    <!-- Summary Cards -->
-    <div class="row mb-4">
-        <!-- Saylov uchastkalar soni -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Saylov uchastkalar soni
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ districts_count }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-map-marker-alt fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Uchasktka saylov komissiyasi a'zolari -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Komissiya a'zolari
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ members_count }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Erkaklar -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Erkaklar
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ male_count }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-male fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Ayollar -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Ayollar
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ female_count }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-female fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- District Table and Age Chart -->
-    <div class="row mb-4">
-        <!-- District Table -->
-        <div class="col-xl-6 col-lg-12 mb-4">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Tumanlar kesimida</h6>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Tuman nomi</th>
-                                    <th>Saylov uchastkalari soni</th> <!-- Updated column header -->
-                                    <th>USK a'zolari</th>
-                                    <th>Kuzatuvchilar</th>
-                                    <th>Jami</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for district in district_data %}
-                                <tr>
-                                    <td>{{ district.name }}</td>
-                                    <td>{{ district.district_count }}</td> <!-- Display count of districts -->
-                                    <td>{{ district.commission_member_count }}</td>
-                                    <td>{{ district.observer_count }}</td>
-                                    <td>{{ district.total_count }}</td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="5">Ma'lumotlar mavjud emas</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Age Distribution Chart -->
-        <div class="col-xl-6 col-lg-12 mb-4">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Yosh bo'yicha taqsimot</h6>
-                </div>
-                <div class="card-body">
-                    <canvas id="ageChart" style="max-height: 300px;"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Nationality, Education, Specialization Tables -->
-    <div class="row">
-        <!-- Nationality Distribution -->
-        <div class="col-xl-4 col-lg-12 mb-4">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Millati</h6>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Millati</th>
-                                    <th>Soni</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for nationality in nationalities %}
-                                <tr>
-                                    <td>{{ nationality.nationality }}</td>
-                                    <td>{{ nationality.count }}</td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="2">Ma'lumotlar mavjud emas</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Education Distribution -->
-        <div class="col-xl-4 col-lg-12 mb-4">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Ma'lumoti</h6>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Ma'lumoti</th>
-                                    <th>Soni</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for education in educations %}
-                                <tr>
-                                    <td>{{ education.education }}</td>
-                                    <td>{{ education.count }}</td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="2">Ma'lumotlar mavjud emas</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Specialization Distribution -->
-        <div class="col-xl-4 col-lg-12 mb-4">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Mutaxassisligi</h6>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Mutaxassisligi</th>
-                                    <th>Soni</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for specialization in specializations %}
-                                <tr>
-                                    <td>{{ specialization.specialization }}</td>
-                                    <td>{{ specialization.count }}</td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="2">Ma'lumotlar mavjud emas</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+    
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <!-- Main header row with column groups -->
+                <tr class="bg-light">
+                    <th rowspan="2" class="align-middle text-center">№</th>
+                    <th rowspan="2" class="align-middle text-center">Hududlar</th>
+                    <th rowspan="2" class="align-middle text-center">Uchastkalar soni</th>
+                    <th rowspan="2" class="align-middle text-center">Ro'yxatga olingan saylovchilar soni</th>
+                    <th colspan="2" class="text-center">Holat</th>
+                    <th colspan="7" class="text-center">Faoliyat sohasi</th>
+                    <th colspan="8" class="text-center">Mutaxassisligi</th>
+                    <th colspan="7" class="text-center">Millati</th>
+                    <th colspan="3" class="text-center">Ma'lumoti</th>
+                    <th colspan="5" class="text-center">Yoshi</th>
+                    <th colspan="3" class="text-center">Shu jumlada</th>
+                    <th rowspan="2" class="align-middle text-center">Nogironligi tegishli shaxslar</th>
+                    <th rowspan="2" class="align-middle text-center">Axborot-kommunikatsiya texnologiyalari yaratish</th>
+                    <th rowspan="2" class="align-middle text-center">Nafaqadagilar</th>
+                    <th colspan="2" class="text-center">Xorijiy tillar</th>
+                </tr>
+                
+                <!-- Subheader row -->
+                <tr class="bg-light">
+                    <!-- Holat (Status) subheaders -->
+                    <th class="text-center">Avval qatnashgan</th>
+                    <th class="text-center">Avval qatnashmagan</th>
+                    
+                    <!-- Faoliyat sohasi (Activity field) subheaders -->
+                    <th class="text-center">Xalq ta'limi tizimi hodimi</th>
+                    <th class="text-center">Oliy ta'lim tizimi hodimi</th>
+                    <th class="text-center">Boshqa davlat boshqaruvlari va muassasalar xodimlari</th>
+                    <th class="text-center">O'zini o'zi boshqarish organi vakillari</th>
+                    <th class="text-center">Nodavlat notijorat tashkilotlar xodimlari</th>
+                    <th class="text-center">Boshqa nodavlat mavjudligi sohasi vakillari</th>
+                    <th class="text-center">Vaqtcha ishsizlar</th>
+                    
+                    <!-- Mutaxassisligi (Specialization) subheaders -->
+                    <th class="text-center">O'qituvchi</th>
+                    <th class="text-center">Shifokor</th>
+                    <th class="text-center">Muhandis</th>
+                    <th class="text-center">Iqtisodchi</th>
+                    <th class="text-center">Jurnalist</th>
+                    <th class="text-center">Huquqshunos</th>
+                    <th class="text-center">Qishloq xo'jaligi</th>
+                    <th class="text-center">Boshqa</th>
+                    
+                    <!-- Millati (Nationality) subheaders -->
+                    <th class="text-center">O'zbek</th>
+                    <th class="text-center">Qoraqalpoq</th>
+                    <th class="text-center">Qozoq</th>
+                    <th class="text-center">Rus</th>
+                    <th class="text-center">Tojik</th>
+                    <th class="text-center">Koreys</th>
+                    <th class="text-center">Boshqa</th>
+                    
+                    <!-- Ma'lumoti (Education) subheaders -->
+                    <th class="text-center">Oliy</th>
+                    <th class="text-center">O'rta maxsus</th>
+                    <th class="text-center">O'rta</th>
+                    
+                    <!-- Yoshi (Age) subheaders -->
+                    <th class="text-center">21-30 gacha</th>
+                    <th class="text-center">31-40 gacha</th>
+                    <th class="text-center">41-50 gacha</th>
+                    <th class="text-center">51-60 gacha</th>
+                    <th class="text-center">60 yoshdan kattalar</th>
+                    
+                    <!-- Shu jumlada (Including) subheaders -->
+                    <th class="text-center">Rais ayollar</th>
+                    <th class="text-center">Rais o'rinbosari ayollar</th>
+                    <th class="text-center">Kotib ayollar</th>
+                    
+                    <!-- Xorijiy tillar (Foreign languages) subheaders -->
+                    <th class="text-center">Mukammal rus tilini biladi</th>
+                    <th class="text-center">Mukammal ingliz tilini biladi</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                <!-- Total row -->
+                <tr class="bg-info-subtle">
+                    <td></td>
+                    <td class="fw-bold text-primary">Jami</td>
+                    <td class="text-center">{{ total_precincts }}</td>
+                    <td class="text-center">{{ all_members.count }}</td>
+                    <td class="text-center">{{ participated_count }}</td>
+                    <td class="text-center">{{ not_participated_count }}</td>
+                    
+                    <!-- Activity fields -->
+                    <td class="text-center">{{ public_education_count }}</td>
+                    <td class="text-center">{{ higher_education_count }}</td>
+                    <td class="text-center">{{ government_count }}</td>
+                    <td class="text-center">{{ self_governance_count }}</td>
+                    <td class="text-center">{{ ngo_count }}</td>
+                    <td class="text-center">{{ private_sector_count }}</td>
+                    <td class="text-center">{{ unemployed_count }}</td>
+                    
+                    <!-- Specialization -->
+                    <td class="text-center">{{ teacher_count }}</td>
+                    <td class="text-center">{{ doctor_count }}</td>
+                    <td class="text-center">{{ engineer_count }}</td>
+                    <td class="text-center">{{ economist_count }}</td>
+                    <td class="text-center">{{ journalist_count }}</td>
+                    <td class="text-center">{{ lawyer_count }}</td>
+                    <td class="text-center">{{ agriculture_count }}</td>
+                    <td class="text-center">{{ other_spec_count }}</td>
+                    
+                    <!-- Nationality -->
+                    <td class="text-center">{{ uzbek_count }}</td>
+                    <td class="text-center">{{ karakalpak_count }}</td>
+                    <td class="text-center">{{ kazakh_count }}</td>
+                    <td class="text-center">{{ russian_count }}</td>
+                    <td class="text-center">{{ tajik_count }}</td>
+                    <td class="text-center">{{ korean_count }}</td>
+                    <td class="text-center">{{ other_nat_count }}</td>
+                    
+                    <!-- Education -->
+                    <td class="text-center">{{ higher_count }}</td>
+                    <td class="text-center">{{ secondary_special_count }}</td>
+                    <td class="text-center">{{ secondary_count }}</td>
+                    
+                    <!-- Age groups -->
+                    <td class="text-center">{{ age_21_30_count }}</td>
+                    <td class="text-center">{{ age_31_40_count }}</td>
+                    <td class="text-center">{{ age_41_50_count }}</td>
+                    <td class="text-center">{{ age_51_60_count }}</td>
+                    <td class="text-center">{{ age_60_plus_count }}</td>
+                    
+                    <!-- Women in positions -->
+                    <td class="text-center">{{ female_chairman_count }}</td>
+                    <td class="text-center">{{ female_deputy_count }}</td>
+                    <td class="text-center">{{ female_secretary_count }}</td>
+                    
+                    <!-- Other statistics -->
+                    <td class="text-center">{{ disabled_count }}</td>
+                    <td class="text-center">{{ it_specialist_count }}</td>
+                    <td class="text-center">{{ retired_count }}</td>
+                    
+                    <!-- Language proficiency -->
+                    <td class="text-center">{{ russian_speakers_count }}</td>
+                    <td class="text-center">{{ english_speakers_count }}</td>
+                </tr>
+                
+                <!-- District rows -->
+                {% for district in districts %}
+                <tr {% if forloop.counter|divisibleby:2 %}class="bg-light"{% endif %}>
+                    <td class="text-center">{{ forloop.counter }}</td>
+                    <td>{{ district.name }}</td>
+                    <td class="text-center">{{ district.precinct_count }}</td>
+                    <td class="text-center">{{ district.voter_count }}</td>
+                    
+                    <!-- Status -->
+                    <td class="text-center">{{ district.participated_count }}</td>
+                    <td class="text-center">{{ district.not_participated_count }}</td>
+                    
+                    <!-- Activity fields -->
+                    <td class="text-center">{{ district.public_education_count }}</td>
+                    <td class="text-center">{{ district.higher_education_count }}</td>
+                    <td class="text-center">{{ district.government_count }}</td>
+                    <td class="text-center">{{ district.self_governance_count }}</td>
+                    <td class="text-center">{{ district.ngo_count }}</td>
+                    <td class="text-center">{{ district.private_sector_count }}</td>
+                    <td class="text-center">{{ district.unemployed_count }}</td>
+                    
+                    <!-- Specialization -->
+                    <td class="text-center">{{ district.teacher_count }}</td>
+                    <td class="text-center">{{ district.doctor_count }}</td>
+                    <td class="text-center">{{ district.engineer_count }}</td>
+                    <td class="text-center">{{ district.economist_count }}</td>
+                    <td class="text-center">{{ district.journalist_count }}</td>
+                    <td class="text-center">{{ district.lawyer_count }}</td>
+                    <td class="text-center">{{ district.agriculture_count }}</td>
+                    <td class="text-center">{{ district.other_spec_count }}</td>
+                    
+                    <!-- Nationality -->
+                    <td class="text-center">{{ district.uzbek_count }}</td>
+                    <td class="text-center">{{ district.karakalpak_count }}</td>
+                    <td class="text-center">{{ district.kazakh_count }}</td>
+                    <td class="text-center">{{ district.russian_count }}</td>
+                    <td class="text-center">{{ district.tajik_count }}</td>
+                    <td class="text-center">{{ district.korean_count }}</td>
+                    <td class="text-center">{{ district.other_nat_count }}</td>
+                    
+                    <!-- Education -->
+                    <td class="text-center">{{ district.higher_count }}</td>
+                    <td class="text-center">{{ district.secondary_special_count }}</td>
+                    <td class="text-center">{{ district.secondary_count }}</td>
+                    
+                    <!-- Age groups -->
+                    <td class="text-center">{{ district.age_21_30_count }}</td>
+                    <td class="text-center">{{ district.age_31_40_count }}</td>
+                    <td class="text-center">{{ district.age_41_50_count }}</td>
+                    <td class="text-center">{{ district.age_51_60_count }}</td>
+                    <td class="text-center">{{ district.age_60_plus_count }}</td>
+                    
+                    <!-- Women in positions -->
+                    <td class="text-center">{{ district.female_chairman_count }}</td>
+                    <td class="text-center">{{ district.female_deputy_count }}</td>
+                    <td class="text-center">{{ district.female_secretary_count }}</td>
+                    
+                    <!-- Other statistics -->
+                    <td class="text-center">{{ district.disabled_count }}</td>
+                    <td class="text-center">{{ district.it_specialist_count }}</td>
+                    <td class="text-center">{{ district.retired_count }}</td>
+                    
+                    <!-- Language proficiency -->
+                    <td class="text-center">{{ district.russian_speakers_count }}</td>
+                    <td class="text-center">{{ district.english_speakers_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Age Chart
-    var ageCtx = document.getElementById('ageChart').getContext('2d');
-    var ageChart = new Chart(ageCtx, {
-        type: 'bar',
-        data: {
-            labels: ['18-30', '31-45', '46-60', '60+'],
-            datasets: [{
-                label: "Soni",
-                backgroundColor: "#4e73df",
-                hoverBackgroundColor: "#2e59d9",
-                borderColor: "#4e73df",
-                data: [
-                    {{ age_groups.age_18_30|default:0 }},
-                    {{ age_groups.age_31_45|default:0 }},
-                    {{ age_groups.age_46_60|default:0 }},
-                    {{ age_groups.age_60_plus|default:0 }}
-                ],
-            }],
-        },
-        options: {
-            maintainAspectRatio: false,
-            layout: {
-                padding: {
-                    left: 10,
-                    right: 25,
-                    top: 25,
-                    bottom: 0
-                }
-            },
-            scales: {
-                x: {
-                    grid: {
-                        display: false,
-                        drawBorder: false
-                    },
-                    ticks: {
-                        maxTicksLimit: 6
-                    },
-                    maxBarThickness: 25,
-                },
-                y: {
-                    ticks: {
-                        min: 0,
-                        maxTicksLimit: 5,
-                        padding: 10,
-                    },
-                    grid: {
-                        color: "rgb(234, 236, 244)",
-                        zeroLineColor: "rgb(234, 236, 244)",
-                        drawBorder: false,
-                        borderDash: [2],
-                        zeroLineBorderDash: [2]
-                    }
-                },
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    titleMarginBottom: 10,
-                    titleFont: {
-                        size: 14
-                    },
-                    titleColor: '#6e707e',
-                    backgroundColor: "rgb(255,255,255)",
-                    bodyColor: "#858796",
-                    borderColor: '#dddfeb',
-                    borderWidth: 1,
-                    xPadding: 15,
-                    yPadding: 15,
-                    displayColors: false,
-                    caretPadding: 10,
-                },
-            },
+    document.addEventListener('DOMContentLoaded', function() {
+        const exportButton = document.querySelector('a[href="{% url "export_excel" %}"]');
+        
+        if (exportButton) {
+            exportButton.addEventListener('click', function() {
+                this.innerHTML = 'Eksport qilinmoqda...';
+                this.classList.add('btn-disabled');
+                
+                // Reset button after 3 seconds (in case the download takes time)
+                setTimeout(() => {
+                    this.innerHTML = 'Excel\'ga eksport qilish';
+                    this.classList.remove('btn-disabled');
+                }, 3000);
+            });
         }
     });
 </script>

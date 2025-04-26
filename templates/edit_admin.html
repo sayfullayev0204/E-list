@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Adminni tahrirlash - Saylov tizimi{% endblock %}
+
+{% block content %}
+<body>
+    <h2>Adminni tahrirlash</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %};">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <form method="post" class="form">
+        {% csrf_token %}
+        <div>
+            <label>Foydalanuvchi nomi:</label>
+            <input type="text" name="username" value="{{ user.username }}" required class="form-control">
+        </div>
+        <div>
+            <label>Ism:</label>
+            <input type="text" name="name" value="{{ user.first_name }}" required class="form-control">
+        </div>
+        <div>
+            <label>Parol (o'zgartirish uchun yozing):</label>
+            <input type="password" name="password" class="form-control"> <br>
+        </div>
+        <button type="submit" class="btn btn-success">Saqlash</button>
+    </form>
+    
+    <a href="{% url 'admin_list' %}" style="text-decoration: none">Orqaga</a>
+</body>
+{% endblock %}

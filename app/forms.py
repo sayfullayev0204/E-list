@@ -61,3 +61,25 @@ class ObserverForm(forms.ModelForm):
     class Meta:
         model = Observer
         fields = ['party_name', 'district', 'full_name', 'workplace']
+
+from django import forms
+from .models import Member, District
+
+class MemberForm(forms.ModelForm):
+    class Meta:
+        model = Member
+        fields = [
+            'first_name', 'last_name', 'district', 'participation_status',
+            'activity_field', 'specialization', 'nationality', 'education',
+            'birth_date', 'gender', 'is_disabled', 'is_it_specialist',
+            'is_retired', 'position', 'knows_russian', 'knows_english','participation_status'
+        ]
+        widgets = {
+            'birth_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+class MemberCheckForm(forms.Form):
+    first_name = forms.CharField(max_length=100, label="Ism")
+    last_name = forms.CharField(max_length=100, label="Familiya")
+    district = forms.ModelChoiceField(queryset=District.objects.all(), label="Hudud", required=False)
+

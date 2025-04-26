@@ -1,0 +1,576 @@
+{% extends 'base.html' %}
+
+{% block title %}Saylov Ma'lumotlari - A'zo qo'shish{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="title">A'zo qo'shish</h1>
+    
+    <div class="form-container">
+        <form method="post" class="form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <h3>Asosiy ma'lumotlar</h3>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.first_name.id_for_label }}">Ism:</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                            <div class="error">{{ form.first_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="{{ form.last_name.id_for_label }}">Familiya:</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                            <div class="error">{{ form.last_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.district.id_for_label }}">Hudud:</label>
+                        {{ form.district }}
+                        {% if form.district.errors %}
+                            <div class="error">{{ form.district.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.birth_date.id_for_label }}">Tug'ilgan sana:</label>
+                        {{ form.birth_date }}
+                        {% if form.birth_date.errors %}
+                            <div class="error">{{ form.birth_date.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="{{ form.gender.id_for_label }}">Jinsi:</label>
+                        {{ form.gender }}
+                        {% if form.gender.errors %}
+                            <div class="error">{{ form.gender.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <h3>Qo'shimcha ma'lumotlar</h3>
+                <div class="form-field">
+                        <label for="{{ form.previously_participated.id_for_label }}">Avval qatnashgan:</label>
+                        {{ form.participation_status }}
+                        {% if form.participation_status.errors %}
+                            <div class="error">{{ form.participation_status.errors }}</div>
+                        {% endif %}
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.activity_field.id_for_label }}">Faoliyat sohasi:</label>
+                        {{ form.activity_field }}
+                        {% if form.activity_field.errors %}
+                            <div class="error">{{ form.activity_field.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="{{ form.specialization.id_for_label }}">Mutaxassisligi:</label>
+                        {{ form.specialization }}
+                        {% if form.specialization.errors %}
+                            <div class="error">{{ form.specialization.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.nationality.id_for_label }}">Millati:</label>
+                        {{ form.nationality }}
+                        {% if form.nationality.errors %}
+                            <div class="error">{{ form.nationality.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="{{ form.education.id_for_label }}">Ma'lumoti:</label>
+                        {{ form.education }}
+                        {% if form.education.errors %}
+                            <div class="error">{{ form.education.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <h3>Qo'shimcha ma'lumotlar</h3>
+                <div class="form-row">
+                    <div class="form-field checkbox-field">
+                        <label for="{{ form.is_disabled.id_for_label }}">Nogironligi bor:</label>
+                        {{ form.is_disabled }}
+                    </div>
+                    
+                    <div class="form-field checkbox-field">
+                        <label for="{{ form.is_it_specialist.id_for_label }}">IT mutaxassisi:</label>
+                        {{ form.is_it_specialist }}
+                    </div>
+                    
+                    <div class="form-field checkbox-field">
+                        <label for="{{ form.is_retired.id_for_label }}">Nafaqada:</label>
+                        {{ form.is_retired }}
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-field checkbox-field">
+                        <label for="{{ form.knows_russian.id_for_label }}">Rus tilini biladi:</label>
+                        {{ form.knows_russian }}
+                    </div>
+                    
+                    <div class="form-field checkbox-field">
+                        <label for="{{ form.knows_english.id_for_label }}">Ingliz tilini biladi:</label>
+                        {{ form.knows_english }}
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.position.id_for_label }}">Lavozimi:</label>
+                        {{ form.position }}
+                        {% if form.position.errors %}
+                            <div class="error">{{ form.position.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success">Saqlash</button>
+                <a href="{% url 'home' %}" class="btn btn-secondary">Bekor qilish</a>
+            </div>
+        </form>
+    </div>
+</div>
+<style>
+    /* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 100%;
+    padding: 20px;
+    margin: 0 auto;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 0;
+}
+
+.navbar-brand {
+    font-size: 20px;
+    margin: 0;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-nav {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-item {
+    margin-left: 20px;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+/* Button Styles */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-success {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #45a049;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+/* Table Styles */
+.table-container {
+    overflow-x: auto;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+.election-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    text-align: center;
+}
+
+.election-table th,
+.election-table td {
+    border: 1px solid #ccc;
+    padding: 6px 4px;
+    vertical-align: middle;
+}
+
+.election-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.header-row th {
+    background-color: #e6e6e6;
+}
+
+.subheader-row th {
+    background-color: #f0f0f0;
+}
+
+.total-row {
+    background-color: #e6f7ff;
+    font-weight: bold;
+}
+
+.total-row td:nth-child(2) {
+    color: blue;
+    font-weight: bold;
+}
+
+/* Alternate row colors for better readability */
+.election-table tbody tr:nth-child(even):not(.total-row) {
+    background-color: #f9f9f9;
+}
+
+/* Hover effect */
+.election-table tbody tr:hover:not(.total-row) {
+    background-color: #f0f8ff;
+}
+
+/* Form Styles */
+.form-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+}
+
+.form-group h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    gap: 15px;
+}
+
+.form-field {
+    flex: 1;
+    min-width: 200px;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-field input,
+.form-field select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.checkbox-field {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-field label {
+    margin-right: 10px;
+    margin-bottom: 0;
+}
+
+.checkbox-field input[type="checkbox"] {
+    width: auto;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.error {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Search Form Styles */
+.search-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.search-form .form-row {
+    align-items: flex-end;
+}
+
+/* Results Table Styles */
+.results-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.results-container h2 {
+    margin-top: 0;
+    color: #333;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.results-table th,
+.results-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+.results-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+.results-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.results-table tr:hover {
+    background-color: #f0f8ff;
+}
+
+.no-results {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    color: #6c757d;
+}
+
+/* Messages Styles */
+.messages {
+    margin-bottom: 20px;
+}
+
+.message {
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.message-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.message-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.message-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* Footer Styles */
+.footer {
+    background-color: #343a40;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    margin-top: 40px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .election-table {
+        font-size: 10px;
+    }
+    
+    .election-table th,
+    .election-table td {
+        padding: 4px 2px;
+    }
+    
+    .title {
+        font-size: 20px;
+    }
+    
+    .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+    
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+    
+    .form-field {
+        min-width: 100%;
+    }
+    
+    .navbar .container {
+        flex-direction: column;
+    }
+    
+    .navbar-nav {
+        margin-top: 10px;
+    }
+    
+    .nav-item {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+}
+</style>
+{% endblock %}

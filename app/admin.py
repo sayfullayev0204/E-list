@@ -119,3 +119,24 @@ class ObserverAdmin(ModelAdmin):
     @display(description=_("Kuzatuvchi ma'lumotlari"))
     def get_observer_info(self, obj):
         return f"{obj.full_name} - {obj.get_party_name_display()}"
+from django.contrib import admin
+from .models import District, Member, DistrictStats
+
+@admin.register(District)
+class DistrictAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+
+@admin.register(Member)
+class MemberAdmin(admin.ModelAdmin):
+    list_display = ('first_name', 'last_name', 'district', 'specialization', 'nationality', 'education', 'gender')
+    list_filter = ('district', 'specialization', 'nationality', 'education', 'gender', 'is_disabled', 'is_it_specialist', 'is_retired')
+    search_fields = ('first_name', 'last_name')
+    date_hierarchy = 'created_at'
+
+@admin.register(DistrictStats)
+class DistrictStatsAdmin(admin.ModelAdmin):
+    list_display = ('district', 'registered_voters', 'total_voters', 'percentage', 'updated_at')
+    list_filter = ('district',)
+    readonly_fields = ('updated_at',)    
+

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Adminlar ro'yxati - Saylov tizimi{% endblock %}
+
+{% block content %}
+<body>
+    <h2>Adminlar ro'yxati</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %};">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <table>
+        <tr>
+            <th>Foydalanuvchi nomi</th>
+            <th>Ism</th>
+            <th>Rol</th>
+            <th>Amallar</th>
+        </tr>
+        {% for admin in admins %}
+        <tr>
+            <td>{{ admin.user.username }}</td>
+            <td>{{ admin.user.first_name }}</td>
+            <td>{{ admin.get_role_display }}</td>
+            <td class="actions">
+                <a href="{% url 'edit_admin' admin.user.id %}" class="edit-btn">Tahrirlash</a>
+                <a href="{% url 'delete_admin' admin.user.id %}" class="delete-btn">O'chirish</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">Hech qanday admin topilmadi.</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <a href="{% url 'register' %}">Yangi admin qo'shish</a>
+</body>
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .actions a {
+        margin-right: 10px;
+        text-decoration: none;
+        padding: 5px 10px;
+        border-radius: 3px;
+    }
+    .edit-btn {
+        background-color: #4CAF50;
+        color: white;
+    }
+    .delete-btn {
+        background-color: #f44336;
+        color: white;
+    }
+    a{
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
